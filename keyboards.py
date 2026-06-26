@@ -7,7 +7,7 @@ def get_main_keyboard():
     builder = ReplyKeyboardBuilder()
 
     builder.add(types.KeyboardButton(text="MENU"))
-    builder.add(types.KeyboardButton(text="address and deliver"))
+    builder.add(types.KeyboardButton(text="deliver"))
     builder.add(types.KeyboardButton(text="cabinet"))
 
     builder.adjust(2)

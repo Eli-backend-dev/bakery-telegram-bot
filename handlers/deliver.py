@@ -1,17 +1,28 @@
-from aiogram import Router, F, types
-from keyboards import get_main_keyboard
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext 
+from aiogram.types import Message
+from aiogram import F, Router
 
 deliver_router = Router()
 
-@deliver_router.message(F.text == "deliver")
-async def process_deliver(message: types.Message):
-    # Текст, который увидит пользователь
-    delivery_text = (
-        "🚚 **Информация о доставке тортиков:**\n\n"
-        "✨ Доставка по городу — 300 рублей.\n"
-        "✨ При заказе от 3000 рублей — бесплатно!\n"
-        "⏱️ Пожалуйста, делайте заказ минимум за 2-3 дня."
-    )
+class DeliveryStates(StatesGroup):
+    waiting_for_address = State()
+
+
+
+@deliver_router.message(F.text == "deliver")  
+async def process_deliver(message: Message, state: FSMContext):
+    await message.answer("Пожалуйста, введите ваш адрес доставки:")
+
+    await state.set_state(DeliveryStates.waiting_for_address) 
+
+
+
+@deliver_router.message(DeliveryStates.waiting_for_address) 
+async def process_deliver(message: Message, state: FSMContext):
+    user_address  = message.text
+
+    await message.answer(f"Спасибо! Ваш адрес: {user_address} записан.")
+
+    await state.clear()
     
-    # Отправляем текст и прикрепляем главное меню обратно
-    await message.answer(text=delivery_text, reply_markup=get_main_keyboard())

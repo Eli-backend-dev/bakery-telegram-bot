@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from database import init_db
 from handlers.menu import menu_router
-from handlers.users import users_router
+from handlers.cabinet import users_router
 from handlers.deliver import deliver_router
 
 load_dotenv()

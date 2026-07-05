@@ -1,5 +1,5 @@
 from aiogram import types
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder, InlineKeyboardMarkup
 
 from database import get_all_cakes
 
@@ -28,3 +28,12 @@ def get_menu_keyboard():
 
     builder.adjust(1)
     return builder.as_markup()
+
+
+
+def get_address_keyboard() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(text="✅ Всё верно", callback_data="confirm_address")
+    builder.button(text="✏️ Изменить адрес", callback_data="change_address")
+    builder.adjust(2)
+    return builder.as_markup() 

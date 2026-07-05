@@ -1,17 +1,17 @@
 import sqlite3
 
-DB_NAME = "bakery.db"
+DB_NAME = "cake.db"
 
 def init_db():
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
 
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        tg_id INTEGER UNIQUE NOT NULL,
-        name TEXT NOT NULL
-    )
-    ''')
+        CREATE TABLE IF NOT EXISTS users (
+            tg_id INTEGER UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            address TEXT )
+                         ''')
 
 
     cursor.execute('''
@@ -19,18 +19,17 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             code TEXT UNIQUE,
             name TEXT,
-            price INTEGER
-        )
-    ''')   
+            price INTEGER )
+                        ''')
+       
 
     cursor.execute('''
-            CREATE TABLE IF NOT EXISTS orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                user_id INTEGER,                     
-                cake_code TEXT,                      
-                date TEXT DEFAULT CURRENT_TIMESTAMP  
-            )
-        ''')
+        CREATE TABLE IF NOT EXISTS orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            user_id INTEGER,                     
+            cake_code TEXT,                      
+            date TEXT DEFAULT CURRENT_TIMESTAMP  )
+                       ''')
     conn.commit()
      
     fill_initial_cakes() 
@@ -57,6 +56,29 @@ def get_user(tg_id: int):
         result = cursor.fetchone()
         return result[0] if result else None
     
+
+def update_user_address(tg_id: int, address: str):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+           "UPDATE users SET address = ? WHERE tg_id = ?", 
+            (address, tg_id)
+        )
+        conn.commit()
+
+
+def get_user_address(tg_id: int) -> str | None:
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+       
+        cursor.execute("SELECT address FROM users WHERE tg_id = ?", (tg_id,))
+        row = cursor.fetchone()
+        
+        if row and row[0]:
+            return row[0]
+        return None
+
+
 
 def add_order(user_id: int, cake_code: str):
     with sqlite3.connect(DB_NAME) as conn:
